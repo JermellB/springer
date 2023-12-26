@@ -1,7 +1,7 @@
 import sys
 import os
-import requests
 import csv
+from security import safe_requests
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
@@ -46,7 +46,7 @@ for line in data_rows[1:]:
         if not os.path.exists(new_folder):
             os.mkdir(new_folder)
 
-        r = requests.get(url) 
+        r = safe_requests.get(url) 
         new_url = r.url
 
         new_url = new_url.replace('/book/','/content/pdf/')
@@ -57,7 +57,7 @@ for line in data_rows[1:]:
         final = new_url.split('/')[-1]
         final = title.replace(',','-').replace('.','').replace('/',' ') + ' - ' + author.replace(',','-').replace('.','').replace('/',' ') + ' - ' + final
 
-        myfile = requests.get(new_url, allow_redirects=True)
+        myfile = safe_requests.get(new_url, allow_redirects=True)
         open(new_folder+final, 'wb').write(myfile.content)
         
         #download epub version too if exists
@@ -70,9 +70,9 @@ for line in data_rows[1:]:
         final = new_url.split('/')[-1]
         final = title.replace(',','-').replace('.','').replace('/',' ') + ' - ' + author.replace(',','-').replace('.','').replace('/',' ') + ' - ' + final
         
-        request = requests.get(new_url)
+        request = safe_requests.get(new_url)
         if request.status_code == 200:
-            myfile = requests.get(new_url, allow_redirects=True)
+            myfile = safe_requests.get(new_url, allow_redirects=True)
             open(new_folder+final, 'wb').write(myfile.content)
     except:
         print('Error when fetching book ' + str(title))
